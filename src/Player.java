@@ -127,11 +127,4 @@ public class Player
     {
         return String.format("Name: %s\nCreation Date: %s\nHP: %d\nSTR: %d\nDEX: %d\nCON: %d\n", name, creationDate,HP, STR, DEX, CON);
     }
-
-    public static void main(String[] args)
-    {
-        Player Goose = new Player("Goose",10, 10, 10, new Weapon("Broadsword", "1d12", 4));
-
-        System.out.println(Goose);
-    }
 }
