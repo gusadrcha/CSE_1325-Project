@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 
-public class game
+public class Game
 {
     public static Player characterCreationMenu(ArrayList<Weapon> weaponList)
     {
@@ -198,5 +198,6 @@ public class game
                     System.out.println("Wrong input");
             }
         }
+
     }
 }
