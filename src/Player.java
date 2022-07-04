@@ -10,6 +10,7 @@ public class Player
     private int STR;
     private int DEX;
     private int CON;
+    private boolean isDisarmed = false;
     private Weapon weapon;
 
     // Constructors
@@ -68,6 +69,11 @@ public class Player
         CON = con;
     }
 
+    public void setDisarmed(boolean d)
+    {
+        isDisarmed = d;
+    }
+
     public void setWeapon(Weapon w)
     {
         weapon = w;
@@ -108,6 +114,11 @@ public class Player
     public int getCON()
     {
         return this.CON;
+    }
+
+    public boolean getIsDisarmed()
+    {
+        return isDisarmed;
     }
 
     public Weapon getWeapon()
