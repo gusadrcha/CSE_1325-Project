@@ -11,8 +11,8 @@ public class Movement
     {
         Random randomNum = new Random();
 
-        rowValue = randomNum.nextInt(1,5);
-        columnValue = randomNum.nextInt(1,5);
+        rowValue = randomNum.nextInt(1,25);
+        columnValue = randomNum.nextInt(1,25);
     }
 
     // Getters
@@ -122,30 +122,5 @@ public class Movement
             temp.setCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue(), player);
             temp.removeCharacter(player.getPosition().getRowValue() - 1, player.getPosition().getColumnValue());
         }
-    }
-
-    public static void main(String[] args) {
-//        Player Goose = new Player("Goose", 10, 10, 10, new Weapon());
-//        Player Dummy = new Player("Dummy", 10, 10, 10, new Weapon());
-//
-//        Map currentMap = new Map(5, 5);
-//
-////        currentMap.insertCharacter(Goose);
-//        currentMap.setCharacter(2,1,Goose);
-//        Goose.getPosition().setRowValue(2);
-//        Goose.getPosition().setColumnValue(1);
-//
-//        Goose.getPosition().printPosition();
-//
-//        currentMap.insertCharacter(Dummy);
-//
-//        currentMap.printMap();
-//
-//        Goose.getPosition().moveLeft(currentMap, Goose);
-//
-//        System.out.println("AFTER MOVING");
-//
-//        Goose.getPosition().printPosition();
-//        currentMap.printMap();
     }
 }
