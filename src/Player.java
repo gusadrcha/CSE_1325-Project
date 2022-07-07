@@ -12,6 +12,7 @@ public class Player
     private int CON;
     private boolean isDisarmed = false;
     private Weapon weapon;
+    private Movement position;
 
     // Constructors
 
@@ -23,6 +24,7 @@ public class Player
         DEX = 1;
         CON = 1;
         weapon = new Weapon();
+        position = new Movement();
     }
 
     public Player(String n, int str, int dex, int con, Weapon w)
@@ -35,6 +37,7 @@ public class Player
         DEX = dex;
         CON = con;
         weapon = w;
+        position = new Movement();
     }
 
     // Setters
@@ -77,6 +80,11 @@ public class Player
     public void setWeapon(Weapon w)
     {
         weapon = w;
+    }
+
+    public void setPosition(Movement p)
+    {
+        position = p;
     }
 
     // Getters
@@ -124,6 +132,11 @@ public class Player
     public Weapon getWeapon()
     {
         return this.weapon;
+    }
+
+    public Movement getPosition()
+    {
+        return this.position;
     }
 
     // Method(s)
