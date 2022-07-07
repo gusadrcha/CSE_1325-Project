@@ -137,6 +137,7 @@ public class Game
     {
         //----- GAME VARIABLES -----//
         ArrayList<Player> players = new ArrayList<>();
+        Map GAME_MAP = new Map();
 
         //----- FILE WEAPON STUFF ----- //
         Scanner inputFile = new Scanner(new File("/Users/gustavochavez/Documents/College/Summer_Semester_2022/CSE_1325/Phase_1/Phase_1/src/weapons.csv"));
@@ -156,7 +157,6 @@ public class Game
 
             weaponList.add(new Weapon(name, damage, bonus));
         }
-
         inputFile.close();
 
         //----- MENU SELECTION VARIABLES ----- //
