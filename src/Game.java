@@ -48,6 +48,7 @@ public class Game
                 System.out.print("> ");
 
                 characterCreationChoice = characterCreationInput.nextInt();
+                System.out.println();
 
                 switch(characterCreationChoice)
                 {
@@ -96,7 +97,7 @@ public class Game
             DEX = random.nextInt(1, availablePoints);
             availablePoints -= DEX;
 
-            CON = random.nextInt(0, availablePoints);
+            CON = availablePoints;
         }
 
         System.out.println("\n---- WEAPON SELECTION ----\n");
@@ -139,20 +140,13 @@ public class Game
         int timesMoved = 0;
         boolean hasMoved = false, hasAttacked = false;
 
-        System.out.println("\nROUND START\n-----------");
+        System.out.print("\nROUND START\n-----------");
 
         while((!hasMoved && timesMoved != 5) || !hasAttacked)
         {
-            if(opponent.getHP() == 0)
-            {
-                System.out.println(attacker.getName() + " HAS KILLED " + opponent.getName());
-                System.out.println(attacker.getName().toUpperCase() + " WINS!!");
-                break;
-            }
-
             if(GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
             {
-                System.out.println("**" + attacker.getName() + " IS ADJACENT TO AN ENEMY**");
+                System.out.print("GAME: " + attacker.getName() + " is next to another player!!\n");
             }
 
             if(hasMoved == true && attacker.getIsDisarmed() == true)
@@ -166,6 +160,7 @@ public class Game
             System.out.println("3. Move Player\n");
 
             playerChoice = input.nextInt();
+            System.out.println();
 
             switch(playerChoice)
             {
@@ -180,17 +175,17 @@ public class Game
                                 hasAttacked = true;
                             }
                             else {
-                                System.out.println(attacker.getName() + " IS NOT CLOSE TO ANOTHER PLAYER");
+                                System.out.println("GAME: " + attacker.getName() + " is not close to another player.");
                             }
                         }
                         else
                         {
-                            System.out.println(attacker.getName() + " HAS ALREADY ATTEMPTED AN ATTACK OR DISARM");
+                            System.out.println("GAME: " + attacker.getName() + " has already attempted and attack or disarm.");
                         }
                     }
                     else
                     {
-                        System.out.println(attacker.getName() + " IS DISARMED AND CANNOT ATTACK");
+                        System.out.println("GAME: " + attacker.getName() + " is disarmed and cannot attack.");
                     }
                     break;
 
@@ -206,24 +201,24 @@ public class Game
                             }
                             else
                             {
-                                System.out.println(attacker.getName() + " IS NOT CLOSE TO ANOTHER PLAYER");
+                                System.out.println("GAME: " + attacker.getName() + " is not close to another player.");
                             }
                         }
                         else
                         {
-                            System.out.println(attacker.getName() + " HAS ALREADY ATTEMPTED AN ATTACK OR DISARM");
+                            System.out.println("GAME: " + attacker.getName() + " has already attempted an attack or disarm.");
                         }
                     }
                     else
                     {
-                        System.out.println(attacker.getName() + " IS DISARMED AND CANNOT ATTACK");
+                        System.out.println("GAME: " + attacker.getName() + " is disarmed and cannot disarm.");
                     }
                     break;
 
                 case 3:
                     if(hasMoved == true && timesMoved == 5)
                     {
-                        System.out.println(attacker.getName() +  " HAS ALREADY MOVED");
+                        System.out.println("GAME: " + attacker.getName() +  " has already moved.");
                     }
 
                     while(timesMoved != 5 && hasMoved != true)
@@ -237,13 +232,14 @@ public class Game
                         System.out.println("5. Forfeit Move\n");
 
                         playerChoice = input.nextInt();
+                        System.out.println();
 
                         switch (playerChoice)
                         {
                             case 1:
                                 if(attacker.getPosition().moveUp(GAME_MAP, attacker))
                                 {
-                                    System.out.println(attacker.getName() + " HAS MOVED UP ONE SPACE\n");
+                                    System.out.println("GAME: " + attacker.getName() + " has moved up one space.\n");
                                     timesMoved++;
                                 }
                                 break;
@@ -251,7 +247,7 @@ public class Game
                             case 2:
                                 if(attacker.getPosition().moveDown(GAME_MAP, attacker))
                                 {
-                                    System.out.println(attacker.getName() + " HAS MOVED DOWN ONE SPACE\n");
+                                    System.out.println("GAME: " + attacker.getName() + " has moved down one space.\n");
                                     timesMoved++;
                                 }
                                 break;
@@ -259,7 +255,7 @@ public class Game
                             case 3:
                                 if(attacker.getPosition().moveLeft(GAME_MAP, attacker))
                                 {
-                                    System.out.println(attacker.getName() + " HAS MOVED LEFT ONE SPACE\n");
+                                    System.out.println("GAME: " + attacker.getName() + " has moved left one space.\n");
                                     timesMoved++;
                                 }
                                 break;
@@ -267,19 +263,19 @@ public class Game
                             case 4:
                                 if(attacker.getPosition().moveRight(GAME_MAP, attacker))
                                 {
-                                    System.out.println(attacker.getName() + " HAS MOVED RIGHT ONE SPACE\n");
+                                    System.out.println("GAME: " + attacker.getName() + " has moved right one space.\n");
                                     timesMoved++;
                                 }
                                 break;
 
                             case 5:
-                                System.out.println(attacker.getName() + " CHOSE TO STAY IN THE SAME SPOT");
+                                System.out.println("GAME: " + attacker.getName() + " chose to stay in the same spot.");
                                 timesMoved = 5;
                                 hasMoved = true;
                                 break;
 
                             default:
-                                System.out.println("Wrong Input");
+                                System.out.println("GAME: " + "Wrong input.");
                         }
 
                         if(GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
@@ -294,10 +290,19 @@ public class Game
                         }
                     }
                     break;
+
+                default:
+                    System.out.println("GAME: Wrong input.");
             }
         }
 
-        System.out.println("ROUND OVER\n----------");
+        System.out.println("ROUND OVER\n----------\n\n\n\n\n\n\n\n\n");
+
+        if(opponent.getHP() == 0)
+        {
+            System.out.print("GAME: " + attacker.getName() + " HAS KILLED " + opponent.getName() + "\n");
+            System.out.print("GAME: " + attacker.getName().toUpperCase() + " WINS!!\n");
+        }
     }
 
     public static void gameLoop(ArrayList<Player> players, Map GAME_MAP)
@@ -305,7 +310,7 @@ public class Game
         // checks to see if any players were created
         if(players.isEmpty())
         {
-            System.out.println("You have not created any players.\nReturning to main menu...\n");
+            System.out.println("GAME: " + "You have not created any players.\nReturning to main menu...\n");
             return;
         }
 
@@ -317,7 +322,7 @@ public class Game
         // places and prints out the map from the start
         GAME_MAP.insertCharacter(players.get(0));
         GAME_MAP.insertCharacter(players.get(1));
-        System.out.println("PLAYERS HAVE BEEN DEPLOYED\n");
+        System.out.println("\nGAME: " + "Player have been deployed\n");
         GAME_MAP.printMap();
 
         while(playerChoice != 2)
@@ -365,19 +370,18 @@ public class Game
                                 players.get(1).setDisarmed(false);
                             }
                         }
-
                     }
 
-                    System.out.println("GAME OVER");
+                    System.out.println("GAME: " + "Game over.");
                     playerChoice = 2;
                     break;
 
                 case 2:
-                    System.out.println("FORCE QUITING GAME\n");
+                    System.out.println("GAME: " + "Force quiting game.\n");
                     break;
 
                 default:
-                    System.out.println("Wrong Input");
+                    System.out.println("GAME: " + "Wrong input.");
             }
         }
 

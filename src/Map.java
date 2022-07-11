@@ -79,7 +79,8 @@ public class Map {
         this.MAP_GRID[r - 1][c - 1] = null;
     }
 
-    public boolean isSpotOccupied(int r, int c) {
+    public boolean isSpotOccupied(int r, int c)
+    {
         if (r >= this.numRows || r <= 0) {
             return false;
         }

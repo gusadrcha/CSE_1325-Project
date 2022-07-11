@@ -10,7 +10,7 @@ public class Combat
             return rollD20(one, two);
         }
 
-        System.out.println("\nROLLING D20 DICE...");
+        System.out.println("\n" + "GAME: Rolling dice...");
 
         return playerOneRoll > playerTwoRoll;
     }
@@ -22,14 +22,19 @@ public class Combat
             return;
         }
 
-        int attackingPlayerRoll = GameUtility.rollDice("1d20") + Player.calculateModifier(attacker.getDEX()) + attacker.getWeapon().getHitBonus();
-        int attackingDamage;
+        int rollHit = attacker.rollHit();
 
-        if(attackingPlayerRoll >= opponent.getAC())
+        System.out.print("GAME: "+ attacker.getName() + " attacks " + opponent.getName() + " with " + attacker.getWeapon().getName() + " (" + rollHit + " to hit)");
+
+        if(rollHit >= opponent.getAC())
         {
-            System.out.print(attacker.getName().toUpperCase() + "'S ATTACK WAS A HIT ");
-            attackingDamage = GameUtility.rollDice(attacker.getWeapon().getDamage()) + Player.calculateModifier(attacker.getSTR());
-            System.out.println("DAMAGE DEALT: " + attackingDamage + "\n");
+            int attackingDamage = attacker.getWeapon().rollDamage() + Player.calculateModifier(attacker.getSTR());
+
+            if(attackingDamage < 0)
+            {
+                attackingDamage = 0;
+            }
+
             opponent.setHP(opponent.getHP() - attackingDamage);
 
             if(opponent.getHP() <= 0)
@@ -37,11 +42,13 @@ public class Combat
                 opponent.setHP(0);
             }
 
-            System.out.println(opponent.getName() + " HAS " + opponent.getHP() + " HP REMAINING\n");
+            System.out.print("...HITS!\n");
+
+            System.out.print(opponent.getName() + " took " + attackingDamage + " amount of damage.\n\n");
         }
         else
         {
-            System.out.println(attacker.getName() + "'S ATTACK WAS A MISS...\n");
+            System.out.print("...MISSES!\n ");
         }
     }
 
@@ -52,12 +59,12 @@ public class Combat
 
         if(attackerRoll > opponentRoll)
         {
-            System.out.println(attacker.getName() + " DISARMED " + opponent.getName() + "\n");
+            System.out.print("GAME: " + attacker.getName() + " has disarmed " + opponent.getName() + "\n");
             opponent.setDisarmed(true);
             return true;
         }
 
-        System.out.println(attacker.getName() +  " WAS NOT ABLE TO DISARM " + opponent.getName() + "\n");
+        System.out.println("GAME: " + attacker.getName() +  " was not able to disarm " + opponent.getName() + "\n");
         return false;
     }
 }

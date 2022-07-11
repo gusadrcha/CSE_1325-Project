@@ -52,6 +52,12 @@ public class Weapon
         this.hitBonus = hb;
     }
 
+    // Methods
+    public int rollDamage()
+    {
+        return GameUtility.rollDice(this.damage) + this.hitBonus;
+    }
+
     // Overrides
     @Override
     public String toString()

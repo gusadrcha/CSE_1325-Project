@@ -48,12 +48,13 @@ public class Movement
 
         if(this.columnValue == temp.getNumColumns())
         {
-            System.out.println("YOU ARE ON THE RIGHT BORDER OF THE MAP.\nCANNOT MOVE RIGHT.");
+            System.out.print("GAME: You are on the right border of the map.\n");
+            System.out.print("GAME: Cannot move right.\n");
             return false;
         }
         else if(temp.isSpotOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() + 1))
         {
-            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            System.out.print("GAME: Cannot move, obstacle in the way.\n");
             return false;
         }
         else
@@ -69,12 +70,13 @@ public class Movement
     {
         if(this.columnValue == 1)
         {
-            System.out.println("YOU ARE ON THE LEFT BORDER OF THE MAP.\nCANNOT MOVE LEFT.");
+            System.out.print("GAME: You are on the left border of the map.\n");
+            System.out.print("GAME: Cannot move left.\n");
             return false;
         }
         else if(temp.isSpotOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() - 1))
         {
-            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            System.out.print("Cannot move, obstacle in the way.\n");
             return false;
         }
         else
@@ -90,12 +92,13 @@ public class Movement
     {
         if(this.rowValue == 1)
         {
-            System.out.println("YOU ARE ON THE TOP BORDER OF THE MAP.\nCANNOT MOVE UP.");
+            System.out.print("GAME: You are on the top border of the map.\n");
+            System.out.print("GAME: Cannot move up.\n");
             return false;
         }
         else if(temp.isSpotOccupied(player.getPosition().getRowValue() - 1, player.getPosition().getColumnValue()))
         {
-            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            System.out.print("Cannot move, obstacle in the way.\n");
             return false;
         }
         else
@@ -111,12 +114,13 @@ public class Movement
     {
         if(this.rowValue == temp.getNumRows())
         {
-            System.out.println("YOU ARE ON THE BOTTOM BORDER OF THE MAP.\nCANNOT MOVE DOWN.");
+            System.out.print("GAME: You are on the bottom border of the map.\n");
+            System.out.print("GAME: Cannot move down.\n");
             return false;
         }
         else if(temp.isSpotOccupied(player.getPosition().getRowValue() + 1, player.getPosition().getColumnValue()))
         {
-            System.out.println("CANNOT MOVE ANOTHER PLAYER IN THE WAY");
+            System.out.print("Cannot move, obstacle in the way.\n");
             return false;
         }
         else

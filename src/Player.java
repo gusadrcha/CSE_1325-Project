@@ -142,6 +142,11 @@ public class Player
         return stat - 5;
     }
 
+    public int rollHit()
+    {
+        return GameUtility.rollDice("1d20") + Player.calculateModifier(this.DEX) + this.weapon.getHitBonus();
+    }
+
     // Override(s)
     @Override
     public String toString()
