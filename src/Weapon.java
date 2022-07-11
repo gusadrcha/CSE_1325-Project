@@ -6,11 +6,10 @@ public class Weapon
     private int hitBonus;
 
     // Constructors
-
     public Weapon()
     {
         name = "Hands";
-        damage = "None";
+        damage = "1d6";
         hitBonus = 0;
     }
 

@@ -10,6 +10,8 @@ public class Combat
             return rollD20(one, two);
         }
 
+        System.out.println("\nROLLING D20 DICE...");
+
         return playerOneRoll > playerTwoRoll;
     }
 
@@ -25,20 +27,24 @@ public class Combat
 
         if(attackingPlayerRoll >= opponent.getAC())
         {
-            System.out.println(attacker.getName().toUpperCase() + "'S ATTACK WAS A HIT");
+            System.out.print(attacker.getName().toUpperCase() + "'S ATTACK WAS A HIT ");
             attackingDamage = GameUtility.rollDice(attacker.getWeapon().getDamage()) + Player.calculateModifier(attacker.getSTR());
+            System.out.println("DAMAGE DEALT: " + attackingDamage + "\n");
             opponent.setHP(opponent.getHP() - attackingDamage);
 
             if(opponent.getHP() <= 0)
             {
                 opponent.setHP(0);
             }
+
+            System.out.println(opponent.getName() + " HAS " + opponent.getHP() + " HP REMAINING\n");
         }
         else
         {
-            System.out.println(attacker.getName() + "'s attack was a miss...");
+            System.out.println(attacker.getName() + "'S ATTACK WAS A MISS...\n");
         }
     }
+
     public static boolean disarm(Player attacker, Player opponent)
     {
         int attackerRoll = GameUtility.rollDice("1d20") + Player.calculateModifier(attacker.getSTR());
@@ -47,61 +53,11 @@ public class Combat
         if(attackerRoll > opponentRoll)
         {
             System.out.println(attacker.getName() + " DISARMED " + opponent.getName() + "\n");
+            opponent.setDisarmed(true);
             return true;
         }
 
-        System.out.println(attacker.getName() +  " was not able to disarm " + opponent.getName() + "\n");
+        System.out.println(attacker.getName() +  " WAS NOT ABLE TO DISARM " + opponent.getName() + "\n");
         return false;
     }
-//    public static void main(String[] args)
-//    {
-//        //----- TESTING PURPOSES -----
-//        Player Player1 = new Player("Goose", 10, 10, 10, new Weapon("Greataxe", "1d12", 4));
-//        Player Player2 = new Player("Dummy", 10, 10, 10, new Weapon("Greataxe", "1d12", 4));
-//
-//        int roundsDisarmed1 = 0;
-//        int roundsDisarmed2 = 0;
-//
-//        System.out.println(Player1);
-//        System.out.println(Player2);
-//
-//        Player2.setDisarmed(Combat.disarm(Player1, Player2));
-//
-//        if(!Player2.getIsDisarmed())
-//        {
-//            Player1.setDisarmed(Combat.disarm(Player2, Player1));
-//        }
-//
-//        int roundNumber = 1;
-//
-//        while(Player1.getHP() > 0 && Player2.getHP() > 0)
-//        {
-//            System.out.println("ROUND " + roundNumber + "\n--------");
-//
-//            if(Player1.getIsDisarmed() == false && roundsDisarmed1 == 0)
-//            {
-//                Combat.attack(Player1, Player2);
-//                System.out.println("Player2's Health: " + Player2.getHP() + "\n");
-//            }
-//            else
-//            {
-//                roundsDisarmed1--;
-//            }
-//
-//            if(Player2.getIsDisarmed() == false && roundsDisarmed2 == 0)
-//            {
-//                Combat.attack(Player2, Player1);
-//                System.out.println("Player1's Health: " + Player1.getHP() + "\n");
-//            }
-//            else
-//            {
-//                roundsDisarmed2--;
-//            }
-//
-//            roundNumber++;
-//        }
-//
-//        System.out.println("\n" + Player1);
-//        System.out.println(Player2);
-//    }
 }

@@ -43,84 +43,88 @@ public class Movement
         System.out.println("Player is at\nRow: " + this.rowValue + "\nColumn: " + this.columnValue);
     }
 
-    public void moveRight(Map temp, Player player)
+    public boolean moveRight(Map temp, Player player)
     {
 
         if(this.columnValue == temp.getNumColumns())
         {
-            System.out.println("You are on the border of the map.\nCannot move right.");
-            return;
+            System.out.println("YOU ARE ON THE RIGHT BORDER OF THE MAP.\nCANNOT MOVE RIGHT.");
+            return false;
         }
-        else if(temp.isOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() + 1))
+        else if(temp.isSpotOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() + 1))
         {
-            System.out.println("CANNOT MOVE");
-            return;
+            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            return false;
         }
         else
         {
             this.columnValue++;
             temp.setCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue(), player);
             temp.removeCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue() - 1);
+            return true;
         }
     }
 
-    public void moveLeft(Map temp, Player player)
+    public boolean moveLeft(Map temp, Player player)
     {
         if(this.columnValue == 1)
         {
-            System.out.println("You are on the border of the map.\nCannot move left.");
-            return;
+            System.out.println("YOU ARE ON THE LEFT BORDER OF THE MAP.\nCANNOT MOVE LEFT.");
+            return false;
         }
-        else if(temp.isOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() - 1))
+        else if(temp.isSpotOccupied(player.getPosition().getRowValue(), player.getPosition().getColumnValue() - 1))
         {
-            System.out.println("CANNOT MOVE");
-            return;
+            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            return false;
         }
         else
         {
             this.columnValue--;
             temp.setCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue(), player);
             temp.removeCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue() + 1);
+            return true;
         }
     }
 
-    public void moveUp(Map temp, Player player)
+    public boolean moveUp(Map temp, Player player)
     {
         if(this.rowValue == 1)
         {
-            System.out.println("You are on the top edge of the map.\nCannot move up.");
-            return;
+            System.out.println("YOU ARE ON THE TOP BORDER OF THE MAP.\nCANNOT MOVE UP.");
+            return false;
         }
-        else if(temp.isOccupied(player.getPosition().getRowValue() - 1, player.getPosition().getColumnValue()))
+        else if(temp.isSpotOccupied(player.getPosition().getRowValue() - 1, player.getPosition().getColumnValue()))
         {
-            System.out.println("CANNOT MOVE");
-            return;
+            System.out.println("CANNOT MOVE ANOTHER PLAYER IS IN THE WAY");
+            return false;
         }
         else
         {
             this.rowValue--;
             temp.setCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue(), player);
             temp.removeCharacter(player.getPosition().getRowValue() + 1, player.getPosition().getColumnValue());
+            return true;
         }
     }
 
-    public void moveDown(Map temp, Player player)
+    public boolean moveDown(Map temp, Player player)
     {
         if(this.rowValue == temp.getNumRows())
         {
-            System.out.println("You are on the bottom edge of the map.\nCannot move down.");
-            return;
+            System.out.println("YOU ARE ON THE BOTTOM BORDER OF THE MAP.\nCANNOT MOVE DOWN.");
+            return false;
         }
-        else if(temp.isOccupied(player.getPosition().getRowValue() + 1, player.getPosition().getColumnValue()))
+        else if(temp.isSpotOccupied(player.getPosition().getRowValue() + 1, player.getPosition().getColumnValue()))
         {
-            System.out.println("CANNOT MOVE");
-            return;
+            System.out.println("CANNOT MOVE ANOTHER PLAYER IN THE WAY");
+            return false;
         }
         else
         {
             this.rowValue++;
             temp.setCharacter(player.getPosition().getRowValue(), player.getPosition().getColumnValue(), player);
             temp.removeCharacter(player.getPosition().getRowValue() - 1, player.getPosition().getColumnValue());
+            return true;
         }
     }
 }

@@ -15,7 +15,6 @@ public class Player
     private Movement position;
 
     // Constructors
-
     public Player()
     {
         name = "Anonymous";
@@ -41,7 +40,6 @@ public class Player
     }
 
     // Setters
-
     public void setName(String n)
     {
         name = n;
@@ -88,7 +86,6 @@ public class Player
     }
 
     // Getters
-
     public String getName()
     {
         return this.name;
