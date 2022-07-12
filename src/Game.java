@@ -427,9 +427,6 @@ public class Game
         }
         inputFile.close();
 
-        players.add(new Player("Goose", 10, 10, 10, new Weapon("Sword", "1d40", 70)));
-        players.add(new Player("Rocio", 10, 10, 10, new Weapon("Sword", "1d12", 5)));
-
         //----- MENU SELECTION VARIABLES ----- //
         Scanner appInput = new Scanner(System.in);
         int mainMenuChoice = 0;
