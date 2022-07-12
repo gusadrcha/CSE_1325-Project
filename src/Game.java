@@ -76,7 +76,6 @@ public class Game
                         break;
 
                     case 5:
-                        characterCreationChoice = 5;
                         break;
 
                     default:
@@ -146,10 +145,10 @@ public class Game
         {
             if(GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
             {
-                System.out.print("GAME: " + attacker.getName() + " is next to another player!!\n");
+                System.out.print("\nGAME: " + attacker.getName() + " is next to another player!!\n");
             }
 
-            if(hasMoved == true && attacker.getIsDisarmed() == true)
+            if(hasMoved && attacker.getIsDisarmed())
             {
                 break;
             }
@@ -165,9 +164,9 @@ public class Game
             switch(playerChoice)
             {
                 case 1:
-                    if(attacker.getIsDisarmed() != true)
+                    if(!attacker.getIsDisarmed())
                     {
-                        if (hasAttacked == false)
+                        if (!hasAttacked)
                         {
                             if (GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
                             {
@@ -190,9 +189,9 @@ public class Game
                     break;
 
                 case 2:
-                    if(attacker.getIsDisarmed() != true)
+                    if(!attacker.getIsDisarmed())
                     {
-                        if (hasAttacked == false)
+                        if (!hasAttacked)
                         {
                             if (GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
                             {
@@ -216,12 +215,12 @@ public class Game
                     break;
 
                 case 3:
-                    if(hasMoved == true && timesMoved == 5)
+                    if(hasMoved && timesMoved == 5)
                     {
                         System.out.println("GAME: " + attacker.getName() +  " has already moved.");
                     }
 
-                    while(timesMoved != 5 && hasMoved != true)
+                    while(timesMoved != 5 && !hasMoved)
                     {
                         GAME_MAP.printMap();
 
@@ -316,8 +315,6 @@ public class Game
 
         //----- GAME LOOP VARIABLES -----//
         Scanner playerInput = new Scanner(System.in);
-        int playerChoice = 0;
-
 
         // places and prints out the map from the start
         GAME_MAP.insertCharacter(players.get(0));
@@ -325,66 +322,83 @@ public class Game
         System.out.println("\nGAME: " + "Player have been deployed\n");
         GAME_MAP.printMap();
 
-        while(playerChoice != 2)
+        int player1timer = -1;
+        int player2timer = -1;
+
+        if(Combat.rollD20(players.get(0), players.get(1)))
         {
-            System.out.println("\n1. Initiate Fight");
-            System.out.println("2. Force Exit Game\n");
-
-            playerChoice = playerInput.nextInt();
-
-            switch(playerChoice)
+            while(players.get(0).getHP() != 0 && players.get(1).getHP() != 0)
             {
-                case 1:
-                    int player1timer = -1;
-                    int player2timer = -1;
+                combatLoop(players.get(0), players.get(1), playerInput, GAME_MAP);
 
-                    while(players.get(0).getHP() != 0 && players.get(1).getHP() != 0)
+                if(players.get(1).getHP() == 0)
+                {
+                    break;
+                }
+
+                combatLoop(players.get(1), players.get(0), playerInput, GAME_MAP);
+
+                if(players.get(1).getHP() == 0)
+                {
+                    break;
+                }
+
+                if(players.get(0).getIsDisarmed())
+                {
+                    player1timer++;
+
+                    if(player1timer == 2)
                     {
-                        if (Combat.rollD20(players.get(0), players.get(1)))
-                        {
-                            combatLoop(players.get(0), players.get(1), playerInput, GAME_MAP);
-                        }
-                        else
-                        {
-                            combatLoop(players.get(1), players.get(0), playerInput, GAME_MAP);
-                        }
-
-                        if(players.get(0).getIsDisarmed() == true)
-                        {
-                            player1timer++;
-
-                            if(player1timer == 2)
-                            {
-                                player1timer = -1;
-                                players.get(0).setDisarmed(false);
-                            }
-                        }
-
-                        if(players.get(1).getIsDisarmed() == true)
-                        {
-                            player2timer++;
-
-                            if(player2timer == 2)
-                            {
-                                player2timer = -1;
-                                players.get(1).setDisarmed(false);
-                            }
-                        }
+                        player1timer = -1;
+                        players.get(0).setDisarmed(false);
                     }
+                }
 
-                    System.out.println("GAME: " + "Game over.");
-                    playerChoice = 2;
-                    break;
+                if(players.get(1).getIsDisarmed())
+                {
+                    player2timer++;
 
-                case 2:
-                    System.out.println("GAME: " + "Force quiting game.\n");
-                    break;
+                    if(player2timer == 2)
+                    {
+                        player2timer = -1;
+                        players.get(1).setDisarmed(false);
+                    }
+                }
+            }
+        }
+        else
+        {
+            while(players.get(0).getHP() != 0 && players.get(1).getHP() != 0)
+            {
+                combatLoop(players.get(1), players.get(0), playerInput, GAME_MAP);
 
-                default:
-                    System.out.println("GAME: " + "Wrong input.");
+                combatLoop(players.get(0), players.get(1), playerInput, GAME_MAP);
+
+                if(players.get(0).getIsDisarmed())
+                {
+                    player1timer++;
+
+                    if(player1timer == 2)
+                    {
+                        player1timer = -1;
+                        players.get(0).setDisarmed(false);
+                    }
+                }
+
+                if(players.get(1).getIsDisarmed())
+                {
+                    player2timer++;
+
+                    if(player2timer == 2)
+                    {
+                        player2timer = -1;
+                        players.get(1).setDisarmed(false);
+                    }
+                }
             }
         }
 
+        System.out.println("GAME: " + "Game over.");
     }
 
     public static void main(String[] args) throws IOException
@@ -449,7 +463,7 @@ public class Game
                     break;
 
                 case 3:
-                    mainMenuChoice = 3;
+                    System.out.println("GAME: Exiting...");
                     break;
 
                 default:

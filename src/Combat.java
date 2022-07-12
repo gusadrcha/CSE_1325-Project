@@ -10,7 +10,7 @@ public class Combat
             return rollD20(one, two);
         }
 
-        System.out.println("\n" + "GAME: Rolling dice...");
+        System.out.println("\n" + "GAME: Rolling dice to see who goes first...\n");
 
         return playerOneRoll > playerTwoRoll;
     }
