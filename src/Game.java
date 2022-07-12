@@ -129,7 +129,6 @@ public class Game
             System.out.println("Character not saved...");
             characterCreationMenu(weaponList);
         }
-
         return temp;
     }
 
@@ -399,6 +398,7 @@ public class Game
         }
 
         System.out.println("GAME: " + "Game over.");
+        playerInput.close();
     }
 
     public static void main(String[] args) throws IOException
@@ -442,7 +442,6 @@ public class Game
             {
                 case 1:
                     gameLoop(players, GAME_MAP);
-                    mainMenuChoice = 3;
                     break;
 
                 case 2:
@@ -468,5 +467,6 @@ public class Game
             }
         }
 
+    appInput.close();
     }
 }

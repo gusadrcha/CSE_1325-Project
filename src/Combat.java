@@ -48,7 +48,7 @@ public class Combat
         }
         else
         {
-            System.out.print("...MISSES!\n ");
+            System.out.print("...MISSES!\n");
         }
     }
 
