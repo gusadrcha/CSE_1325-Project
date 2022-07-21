@@ -1,5 +1,9 @@
+package files;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
@@ -15,6 +19,7 @@ public class Game
 
         System.out.println("\n---- CHARACTER CREATION ----\n");
         System.out.print("Enter Character Name: ");
+
         characterName = characterCreationInput.nextLine();
 
         System.out.println("\n1. Manual Stats");
@@ -129,6 +134,7 @@ public class Game
             System.out.println("Character not saved...");
             characterCreationMenu(weaponList);
         }
+
         return temp;
     }
 
@@ -401,72 +407,147 @@ public class Game
         playerInput.close();
     }
 
-    public static void main(String[] args) throws IOException
+    public static void saveCharacter(ArrayList<Player> Players, Scanner gameInput)throws IOException
     {
-        //----- GAME VARIABLES -----//
-        ArrayList<Player> players = new ArrayList<>();
-        Map GAME_MAP = new Map();
+        System.out.println("Which character would you like to save?");
+        int choice;
 
-        //----- FILE WEAPON STUFF ----- //
-        Scanner inputFile = new Scanner(new File("src/weapons.csv"));
+        for(int i = 0; i < Players.size(); i++)
+        {
+            System.out.println((i + 1) + ": " + Players.get(i).getName());
+        }
+
+        System.out.print("> ");
+        choice = gameInput.nextInt() - 1;
+
+        PrintWriter save_file = new PrintWriter("src/data/saved/players/"+ Players.get(choice).getName() + ".csv");
+
+        save_file.print(Players.get(choice).getName() + ",");
+        save_file.print(Players.get(choice).getCreationDate() + ",");
+        save_file.print(Players.get(choice).getHP() + ",");
+        save_file.print(Players.get(choice).getSTR() + ",");
+        save_file.print(Players.get(choice).getDEX() + ",");
+        save_file.print(Players.get(choice).getCON() + ",");
+        save_file.print(Players.get(choice).getWeapon().getName() + ",");
+        save_file.print(Players.get(choice).getWeapon().getDamage() + ",");
+        save_file.print(Players.get(choice).getWeapon().getHitBonus() + "\n");
+
+        save_file.close();
+    }
+
+    public static void loadCharacter(ArrayList<Player> Players, Scanner gameInput)throws FileNotFoundException
+    {
+        File directory = new File("src/data/saved/players/");
+        String[] filenames = directory.list();
+        int choice;
+        boolean isInRoster = false;
+
+        System.out.println("Which character file would you like to load?");
+
+        for(int i = 0; i < filenames.length; i++)
+            System.out.println((i+1) + ": " + filenames[i]);
+
+        choice = gameInput.nextInt() - 1;
+
+        Scanner playerInfo = new Scanner(new File("src/data/saved/players/" + filenames[choice]));
+
+        Player temp = Player.loadFromCsv(playerInfo.nextLine());
+
+        if(temp == null)
+        {
+            return;
+        }
+
+        if(!Players.isEmpty())
+        {
+            for(int i = 0; i < Players.size(); i++)
+            {
+                if(Players.get(i).getName().equalsIgnoreCase(temp.getName()))
+                {
+                    isInRoster = true;
+                }
+            }
+
+            if(isInRoster)
+            {
+                System.out.println(temp.getName() + " is already in the roster!");
+                System.out.println("Exiting...\n");
+            }
+            else
+            {
+                Players.add(temp);
+                System.out.println(temp.getName() + " was added to the roster!\n");
+            }
+        }
+        else
+        {
+            System.out.println(temp.getName() + " was added to the roster!\n");
+            Players.add(temp);
+        }
+    }
+
+    public static void loadWeapons(ArrayList<Weapon> Weapons)throws FileNotFoundException
+    {
+        Scanner inputFile = new Scanner(new File("src/data/weapons.csv"));
         inputFile.useDelimiter("[,]|\\n");
-
-        ArrayList<Weapon> weaponList = new ArrayList<>();
-
-        String name;
-        String damage;
-        int bonus;
 
         while(inputFile.hasNext())
         {
-            name = inputFile.next();
-            damage = inputFile.next();
-            bonus = Integer.parseInt(inputFile.next());
-
-            weaponList.add(new Weapon(name, damage, bonus));
+            Weapons.add(new Weapon(inputFile.next(), inputFile.next(), Integer.parseInt(inputFile.next())));
         }
-        inputFile.close();
 
-        //----- MENU SELECTION VARIABLES ----- //
-        Scanner appInput = new Scanner(System.in);
+        inputFile.close();
+    }
+
+    public static void main(String[] args) throws IOException
+    {
+        // Necessary game variables
+        ArrayList<Player> Players = new ArrayList<>();
+        ArrayList<Monster> Monsters = new ArrayList<>();
+        ArrayList<Weapon> Weapons = new ArrayList<>();
+        Scanner gameInput = new Scanner(System.in);
+        Map GAME_MAP = new Map();
+
+        loadWeapons(Weapons);
+
         int mainMenuChoice = 0;
-        while(mainMenuChoice != 3)
+
+        while (mainMenuChoice != 5)
         {
             System.out.println("1. Start Game");
             System.out.println("2. Create Characters");
-            System.out.println("3. Exit");
+            System.out.println("3. Load Character");
+            System.out.println("4. Save Character");
+            System.out.println("5. Exit");
+            System.out.print("> ");
 
-            mainMenuChoice = appInput.nextInt();
+            mainMenuChoice = gameInput.nextInt();
 
             switch(mainMenuChoice)
             {
                 case 1:
-                    gameLoop(players, GAME_MAP);
+                    gameLoop(Players, GAME_MAP);
                     break;
 
                 case 2:
-                    players.add(characterCreationMenu(weaponList));
-
-                    System.out.println("Creating second player...\n");
-
-                    players.add(characterCreationMenu(weaponList));
-
-                    for(int i = 0; i < players.size(); i++)
-                    {
-                        System.out.println("Player " + (i + 1) + "\n--------");
-                        System.out.println(players.get(i));
-                    }
+                    Players.add(characterCreationMenu(Weapons));
                     break;
 
                 case 3:
-                    System.out.println("GAME: Exiting...");
+                    loadCharacter(Players, gameInput);
+                    break;
+
+                case 4:
+                    saveCharacter(Players, gameInput);
+                    break;
+
+                case 5:
+                    System.out.println("Quitting...");
                     break;
 
                 default:
-                    System.out.println("Wrong input");
+                    System.out.println("Wrong Input");
             }
         }
-
-    appInput.close();
     }
 }

@@ -1,20 +1,24 @@
+package files;
+
 import java.util.Random;
 
 public class Map {
     // Instance Fields
-    private Player[][] MAP_GRID;
+    private Creature[][] MAP_GRID;
     private int numRows;
     private int numColumns;
 
     // Constructors
-    public Map() {
-        MAP_GRID = new Player[25][25];
+    public Map()
+    {
+        MAP_GRID = new Creature[25][25];
         numRows = 25;
         numColumns = 25;
     }
 
-    public Map(int r, int c) {
-        MAP_GRID = new Player[r][c];
+    public Map(int r, int c)
+    {
+        MAP_GRID = new Creature[r][c];
         numRows = r;
         numColumns = c;
     }
@@ -46,7 +50,14 @@ public class Map {
             {
                 if (this.MAP_GRID[i][j] != null)
                 {
-                    System.out.printf("%5c", this.MAP_GRID[i][j].getName().charAt(0));
+                    if(this.MAP_GRID[i][j] instanceof Player)
+                    {
+                        System.out.printf("%5c", this.MAP_GRID[i][j].getName().charAt(0));
+                    }
+                    else
+                    {
+                        System.out.printf("%5c", 'M');
+                    }
                 }
                 else
                 {
@@ -58,7 +69,7 @@ public class Map {
         }
     }
 
-    public void insertCharacter(Player temp)
+    public void insertCharacter(Creature temp)
     {
         Random random = new Random();
         int row = temp.getPosition().getRowValue();
@@ -96,7 +107,7 @@ public class Map {
         return false;
     }
 
-    public void setCharacter(int r, int c, Player temp)
+    public void setCharacter(int r, int c, Creature temp)
     {
         this.MAP_GRID[r - 1][c - 1] = temp;
     }

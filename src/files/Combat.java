@@ -1,3 +1,4 @@
+package files;
 public class Combat
 {
     public static boolean rollD20(Player one, Player two)
@@ -22,34 +23,7 @@ public class Combat
             return;
         }
 
-        int rollHit = attacker.rollHit();
-
-        System.out.print("GAME: "+ attacker.getName() + " attacks " + opponent.getName() + " with " + attacker.getWeapon().getName() + " (" + rollHit + " to hit)");
-
-        if(rollHit >= opponent.getAC())
-        {
-            int attackingDamage = attacker.getWeapon().rollDamage() + Player.calculateModifier(attacker.getSTR());
-
-            if(attackingDamage < 0)
-            {
-                attackingDamage = 0;
-            }
-
-            opponent.setHP(opponent.getHP() - attackingDamage);
-
-            if(opponent.getHP() <= 0)
-            {
-                opponent.setHP(0);
-            }
-
-            System.out.print("...HITS!\n");
-
-            System.out.print(opponent.getName() + " took " + attackingDamage + " amount of damage.\n\n");
-        }
-        else
-        {
-            System.out.print("...MISSES!\n");
-        }
+        attacker.attack(opponent);
     }
 
     public static boolean disarm(Player attacker, Player opponent)
