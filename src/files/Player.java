@@ -1,12 +1,11 @@
 package files;
 
-import java.io.IOException;
-
 public class Player extends Creature
 {
     // Instance Fields
     private boolean isDisarmed = false;
     private Weapon weapon;
+    private int disarmTimer = -1;
 
     // Constructors
     public Player()
@@ -40,10 +39,20 @@ public class Player extends Creature
         isDisarmed = disarmed;
     }
 
+    public void setDisarmTimer(int dt)
+    {
+        disarmTimer = dt;
+    }
+
     // Getters
+    public int getDisarmTimer()
+    {
+        return this.disarmTimer;
+    }
+
     public boolean getIsDisarmed()
     {
-        return isDisarmed;
+        return this.isDisarmed;
     }
 
     public Weapon getWeapon()
@@ -95,6 +104,9 @@ public class Player extends Creature
     public void attack(Creature opponent)
     {
         int rollHit = this.rollHit();
+
+        if(rollHit < 0)
+            rollHit = 0;
 
         System.out.print("GAME: "+ this.getName() + " attacks " + opponent.getName() + " with " + this.getWeapon().getName() + " (" + rollHit + " to hit)");
 

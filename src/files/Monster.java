@@ -25,6 +25,9 @@ public class Monster extends Creature
     {
         int rollHit = GameUtility.rollDice("1d20") + Creature.calculateModifier(this.getDEX());
 
+        if(rollHit < 0)
+            rollHit = 0;
+
         System.out.print("GAME: "+ this.getName() + " attacks " + target.getName() + " (" + rollHit + " to hit)");
 
         if(rollHit >= target.getAC())
@@ -48,6 +51,24 @@ public class Monster extends Creature
 
     }
 
+    public static Monster loadFromCsv(String input)
+    {
+            String[] csvLine = input.trim().split(",");
+            String name = csvLine[0];
+            int str, dex, con;
+
+            if(!GameUtility.validateName(name))
+            {
+                System.out.println("HERE");
+                return null;
+            }
+
+            str = Integer.parseInt(csvLine[1]);
+            dex = Integer.parseInt(csvLine[2]);
+            con = Integer.parseInt(csvLine[3]);
+
+            return new Monster(name, str, dex, con, Monster.MonsterType.Humanoid);
+    }
 
     @Override
     public String toString()

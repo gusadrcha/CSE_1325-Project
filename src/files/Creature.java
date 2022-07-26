@@ -1,9 +1,8 @@
 package files;
 
-
 import java.time.LocalDateTime;
 
-public abstract class Creature
+public abstract class Creature implements Comparable
 {
     // Instance Fields
     private String name;
@@ -13,8 +12,8 @@ public abstract class Creature
     private int STR;
     private int DEX;
     private int CON;
-
     private Movement position;
+    private int roll;
 
     // Constructors
     public Creature()
@@ -138,47 +137,65 @@ public abstract class Creature
 
     public void setPosition(Movement p)
     {
-        position = p;
+        this.position = p;
+    }
+
+    public void setRoll(int r)
+    {
+        this.roll = r;
     }
 
     // Getters
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
     public String getCreationDate()
     {
-        return creationDate;
+        return this.creationDate;
     }
 
     public int getHP()
     {
-        return HP;
+        return this.HP;
     }
 
     public int getAC()
     {
-        return AC;
+        return this.AC;
     }
 
     public int getSTR()
     {
-        return STR;
+        return this.STR;
     }
 
     public int getDEX()
     {
-        return DEX;
+        return this.DEX;
     }
 
     public int getCON()
     {
-        return CON;
+        return this.CON;
     }
 
     public Movement getPosition()
     {
         return this.position;
+    }
+
+    public int getRoll()
+    {
+        return this.roll;
+    }
+
+    @Override
+    public int compareTo(Object o)
+    {
+        Creature c = (Creature) o;
+
+        return c.roll - this.roll;
     }
 }

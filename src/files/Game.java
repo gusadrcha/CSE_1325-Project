@@ -138,304 +138,189 @@ public class Game
         return temp;
     }
 
-    public static void combatLoop(Player attacker, Player opponent, Scanner input, Map GAME_MAP)
+    public static void combatLoopForPVP(ArrayList<Creature> creatures, Scanner gameInput, Map GAME_MAP)
     {
-        int playerChoice;
-        int timesMoved = 0;
-        boolean hasMoved = false, hasAttacked = false;
-
-        System.out.print("\nROUND START\n-----------");
-
-        while((!hasMoved && timesMoved != 5) || !hasAttacked)
+        while(creatures.size() > 1)
         {
-            if(GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
+            System.out.print("\nROUND START\n-----------\n");
+
+            GAME_MAP.printMap();
+
+            for(int i = 0; i < creatures.size(); i++)
             {
-                System.out.print("\nGAME: " + attacker.getName() + " is next to another player!!\n");
+                Combat.playerTurnPVP((Player) creatures.get(i), gameInput, GAME_MAP);
+                GameUtility.removeDeadCharacters(creatures, GAME_MAP);
+                System.out.println("TURN ENDED\n----------");
             }
 
-            if(hasMoved && attacker.getIsDisarmed())
+            for(Creature currentCreature : creatures)
             {
-                break;
+                if(((Player) currentCreature).getIsDisarmed())
+                {
+                    ((Player) currentCreature).setDisarmTimer(((Player) currentCreature).getDisarmTimer() + 1);
+
+                    if(((Player) currentCreature).getDisarmTimer() > 1)
+                    {
+                        ((Player) currentCreature).setDisarmTimer(-1);
+                        ((Player) currentCreature).setDisarmed(false);
+                    }
+                }
             }
 
-            System.out.println("\n" + attacker.getName() + " do you want to");
-            System.out.println("1. Attack");
-            System.out.println("2. Attempt to disarm");
-            System.out.println("3. Move Player\n");
-
-            playerChoice = input.nextInt();
-            System.out.println();
-
-            switch(playerChoice)
-            {
-                case 1:
-                    if(!attacker.getIsDisarmed())
-                    {
-                        if (!hasAttacked)
-                        {
-                            if (GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
-                            {
-                                Combat.attack(attacker, opponent);
-                                hasAttacked = true;
-                            }
-                            else {
-                                System.out.println("GAME: " + attacker.getName() + " is not close to another player.");
-                            }
-                        }
-                        else
-                        {
-                            System.out.println("GAME: " + attacker.getName() + " has already attempted and attack or disarm.");
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("GAME: " + attacker.getName() + " is disarmed and cannot attack.");
-                    }
-                    break;
-
-                case 2:
-                    if(!attacker.getIsDisarmed())
-                    {
-                        if (!hasAttacked)
-                        {
-                            if (GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
-                            {
-                                Combat.disarm(attacker, opponent);
-                                hasAttacked = true;
-                            }
-                            else
-                            {
-                                System.out.println("GAME: " + attacker.getName() + " is not close to another player.");
-                            }
-                        }
-                        else
-                        {
-                            System.out.println("GAME: " + attacker.getName() + " has already attempted an attack or disarm.");
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("GAME: " + attacker.getName() + " is disarmed and cannot disarm.");
-                    }
-                    break;
-
-                case 3:
-                    if(hasMoved && timesMoved == 5)
-                    {
-                        System.out.println("GAME: " + attacker.getName() +  " has already moved.");
-                    }
-
-                    while(timesMoved != 5 && !hasMoved)
-                    {
-                        GAME_MAP.printMap();
-
-                        System.out.println("1. Move Up");
-                        System.out.println("2. Move Down");
-                        System.out.println("3. Move Left");
-                        System.out.println("4. Move Right");
-                        System.out.println("5. Forfeit Move\n");
-
-                        playerChoice = input.nextInt();
-                        System.out.println();
-
-                        switch (playerChoice)
-                        {
-                            case 1:
-                                if(attacker.getPosition().moveUp(GAME_MAP, attacker))
-                                {
-                                    System.out.println("GAME: " + attacker.getName() + " has moved up one space.\n");
-                                    timesMoved++;
-                                }
-                                break;
-
-                            case 2:
-                                if(attacker.getPosition().moveDown(GAME_MAP, attacker))
-                                {
-                                    System.out.println("GAME: " + attacker.getName() + " has moved down one space.\n");
-                                    timesMoved++;
-                                }
-                                break;
-
-                            case 3:
-                                if(attacker.getPosition().moveLeft(GAME_MAP, attacker))
-                                {
-                                    System.out.println("GAME: " + attacker.getName() + " has moved left one space.\n");
-                                    timesMoved++;
-                                }
-                                break;
-
-                            case 4:
-                                if(attacker.getPosition().moveRight(GAME_MAP, attacker))
-                                {
-                                    System.out.println("GAME: " + attacker.getName() + " has moved right one space.\n");
-                                    timesMoved++;
-                                }
-                                break;
-
-                            case 5:
-                                System.out.println("GAME: " + attacker.getName() + " chose to stay in the same spot.");
-                                timesMoved = 5;
-                                hasMoved = true;
-                                break;
-
-                            default:
-                                System.out.println("GAME: " + "Wrong input.");
-                        }
-
-                        if(GAME_MAP.checkAdjacency(attacker.getPosition().getRowValue(), attacker.getPosition().getColumnValue()))
-                        {
-                            hasMoved = true;
-                            timesMoved = 5;
-                        }
-                        else if(timesMoved == 5)
-                        {
-                            hasAttacked = true;
-                            hasMoved = true;
-                        }
-                    }
-                    break;
-
-                default:
-                    System.out.println("GAME: Wrong input.");
-            }
+            System.out.println("ROUND OVER\n----------\n\n\n\n\n\n\n\n\n");
         }
 
-        System.out.println("ROUND OVER\n----------\n\n\n\n\n\n\n\n\n");
+        System.out.println("GAME: " + creatures.get(0).getName() + " wins!");
+        System.out.println("GAME: " + "Game over.");
+    }
 
-        if(opponent.getHP() == 0)
+    public static void combatLoopForPVE(ArrayList<Creature> creatures, Scanner gameInput, Map GAME_MAP)
+    {
+        boolean isPlayerAlive = true;
+        boolean monstersAlive = true;
+
+        while(isPlayerAlive && monstersAlive)
         {
-            System.out.print("GAME: " + attacker.getName() + " HAS KILLED " + opponent.getName() + "\n");
-            System.out.print("GAME: " + attacker.getName().toUpperCase() + " WINS!!\n");
+            System.out.print("\nROUND START\n-----------\n");
+
+            for (int i = 0; i < creatures.size(); i++)
+            {
+                if(creatures.get(i) instanceof Player)
+                {
+                    Combat.playerTurnPVE((Player) creatures.get(i), gameInput, GAME_MAP);
+                    GameUtility.removeDeadCharacters(creatures, GAME_MAP);
+                }
+                else
+                {
+                    Combat.monsterTurn(creatures.get(i), GAME_MAP);
+                    GameUtility.removeDeadCharacters(creatures, GAME_MAP);
+                }
+
+                if(creatures.get(0).getHP() == 0)
+                {
+                    isPlayerAlive = false;
+
+                    System.out.println("GAME: Player has died.\nGAME: Monsters win!\nGAME: Returning to main menu.");
+
+                    GAME_MAP.clearMap();
+                }
+
+                if(creatures.size() == 1)
+                {
+                    monstersAlive = false;
+
+                    System.out.println("GAME: All monsters have died.\n GAME:Player wins!\nGAME: Returning to main menu");
+
+                    GAME_MAP.clearMap();
+                }
+            }
+
+            System.out.println("ROUND OVER\n----------\n\n\n\n\n\n\n\n\n");
         }
     }
 
-    public static void gameLoop(ArrayList<Player> players, Map GAME_MAP)
+
+    public static void gameLoopForPVP(ArrayList<Creature> creatures, Scanner gameInput, Map GAME_MAP)
     {
         // checks to see if any players were created
-        if(players.isEmpty())
+        if(creatures.isEmpty())
         {
             System.out.println("GAME: " + "You have not created any players.\nReturning to main menu...\n");
             return;
         }
 
-        //----- GAME LOOP VARIABLES -----//
-        Scanner playerInput = new Scanner(System.in);
+        for(Creature currentCreature : creatures)
+        {
+            GAME_MAP.insertCharacter(currentCreature);
+        }
 
-        // places and prints out the map from the start
-        GAME_MAP.insertCharacter(players.get(0));
-        GAME_MAP.insertCharacter(players.get(1));
-        System.out.println("\nGAME: " + "Player have been deployed\n");
         GAME_MAP.printMap();
 
-        int player1timer = -1;
-        int player2timer = -1;
+        GameUtility.rollInitiative(creatures);
 
-        if(Combat.rollD20(players.get(0), players.get(1)))
-        {
-            while(players.get(0).getHP() != 0 && players.get(1).getHP() != 0)
-            {
-                combatLoop(players.get(0), players.get(1), playerInput, GAME_MAP);
-
-                if(players.get(1).getHP() == 0)
-                {
-                    break;
-                }
-
-                combatLoop(players.get(1), players.get(0), playerInput, GAME_MAP);
-
-                if(players.get(1).getHP() == 0)
-                {
-                    break;
-                }
-
-                if(players.get(0).getIsDisarmed())
-                {
-                    player1timer++;
-
-                    if(player1timer == 2)
-                    {
-                        player1timer = -1;
-                        players.get(0).setDisarmed(false);
-                    }
-                }
-
-                if(players.get(1).getIsDisarmed())
-                {
-                    player2timer++;
-
-                    if(player2timer == 2)
-                    {
-                        player2timer = -1;
-                        players.get(1).setDisarmed(false);
-                    }
-                }
-            }
-        }
-        else
-        {
-            while(players.get(0).getHP() != 0 && players.get(1).getHP() != 0)
-            {
-                combatLoop(players.get(1), players.get(0), playerInput, GAME_MAP);
-
-                combatLoop(players.get(0), players.get(1), playerInput, GAME_MAP);
-
-                if(players.get(0).getIsDisarmed())
-                {
-                    player1timer++;
-
-                    if(player1timer == 2)
-                    {
-                        player1timer = -1;
-                        players.get(0).setDisarmed(false);
-                    }
-                }
-
-                if(players.get(1).getIsDisarmed())
-                {
-                    player2timer++;
-
-                    if(player2timer == 2)
-                    {
-                        player2timer = -1;
-                        players.get(1).setDisarmed(false);
-                    }
-                }
-            }
-        }
-
-        System.out.println("GAME: " + "Game over.");
-        playerInput.close();
+        combatLoopForPVP(creatures, gameInput, GAME_MAP);
     }
 
-    public static void saveCharacter(ArrayList<Player> Players, Scanner gameInput)throws IOException
+    public static void gameLoopForPVE(ArrayList<Creature> creatures, Map GAME_MAP, Scanner gameInput)throws FileNotFoundException
+    {
+        if(creatures.isEmpty())
+        {
+            System.out.println("Player was not made.\nReturning to main menu.\n");
+            return;
+        }
+
+        if(creatures.size() > 1)
+        {
+            System.out.println("PVE is meant for one player\n You must remove until one remains");
+
+            while(creatures.size() > 1)
+            {
+                for (int i = 0; i < creatures.size(); i++)
+                {
+                    System.out.println(i+1 + ". " + creatures.get(i).getName());
+                }
+
+                try
+                {
+                    creatures.remove(gameInput.nextInt() - 1);
+                }
+                catch(ArrayIndexOutOfBoundsException e)
+                {
+                    System.out.println("GAME: Entered a number outside of the amount of players.\nTry Again.");
+                }
+            }
+        }
+
+        int choice;
+
+        System.out.println("How many monsters do you want to play against?");
+        choice = gameInput.nextInt();
+
+        loadMonsters(creatures, choice);
+
+        for(Creature currentPlayer : creatures)
+        {
+            GAME_MAP.insertCharacter(currentPlayer);
+        }
+
+        GameUtility.rollInitiative(creatures);
+
+        GAME_MAP.printMap();
+
+        combatLoopForPVE(creatures, gameInput, GAME_MAP);
+    }
+    public static void saveCharacter(ArrayList<Creature> creatures, Scanner gameInput)throws IOException
     {
         System.out.println("Which character would you like to save?");
         int choice;
 
-        for(int i = 0; i < Players.size(); i++)
+        for(int i = 0; i < creatures.size(); i++)
         {
-            System.out.println((i + 1) + ": " + Players.get(i).getName());
+            System.out.println((i + 1) + ": " + creatures.get(i).getName());
         }
 
         System.out.print("> ");
         choice = gameInput.nextInt() - 1;
 
-        PrintWriter save_file = new PrintWriter("src/data/saved/players/"+ Players.get(choice).getName() + ".csv");
+        PrintWriter save_file = new PrintWriter("src/data/saved/players/"+ creatures.get(choice).getName() + ".csv");
 
-        save_file.print(Players.get(choice).getName() + ",");
-        save_file.print(Players.get(choice).getCreationDate() + ",");
-        save_file.print(Players.get(choice).getHP() + ",");
-        save_file.print(Players.get(choice).getSTR() + ",");
-        save_file.print(Players.get(choice).getDEX() + ",");
-        save_file.print(Players.get(choice).getCON() + ",");
-        save_file.print(Players.get(choice).getWeapon().getName() + ",");
-        save_file.print(Players.get(choice).getWeapon().getDamage() + ",");
-        save_file.print(Players.get(choice).getWeapon().getHitBonus() + "\n");
+        if(creatures.get(choice) instanceof Player)
+        {
+            save_file.print(creatures.get(choice).getName() + ",");
+            save_file.print(creatures.get(choice).getCreationDate() + ",");
+            save_file.print(creatures.get(choice).getHP() + ",");
+            save_file.print(creatures.get(choice).getSTR() + ",");
+            save_file.print(creatures.get(choice).getDEX() + ",");
+            save_file.print(creatures.get(choice).getCON() + ",");
+            save_file.print(((Player) creatures.get(choice)).getWeapon().getName() + ",");
+            save_file.print(((Player) creatures.get(choice)).getWeapon().getDamage() + ",");
+            save_file.print(((Player) creatures.get(choice)).getWeapon().getHitBonus() + "\n");
+        }
 
         save_file.close();
     }
 
-    public static void loadCharacter(ArrayList<Player> Players, Scanner gameInput)throws FileNotFoundException
+    public static void loadCharacter(ArrayList<Creature> creatures, Scanner gameInput)throws FileNotFoundException
     {
         File directory = new File("src/data/saved/players/");
         String[] filenames = directory.list();
@@ -458,11 +343,11 @@ public class Game
             return;
         }
 
-        if(!Players.isEmpty())
+        if(!creatures.isEmpty())
         {
-            for(int i = 0; i < Players.size(); i++)
+            for(int i = 0; i < creatures.size(); i++)
             {
-                if(Players.get(i).getName().equalsIgnoreCase(temp.getName()))
+                if(creatures.get(i).getName().equalsIgnoreCase(temp.getName()))
                 {
                     isInRoster = true;
                 }
@@ -475,14 +360,14 @@ public class Game
             }
             else
             {
-                Players.add(temp);
+                creatures.add(temp);
                 System.out.println(temp.getName() + " was added to the roster!\n");
             }
         }
         else
         {
             System.out.println(temp.getName() + " was added to the roster!\n");
-            Players.add(temp);
+            creatures.add(temp);
         }
     }
 
@@ -499,11 +384,23 @@ public class Game
         inputFile.close();
     }
 
+    public static void loadMonsters(ArrayList<Creature> creatures, int count)throws FileNotFoundException
+    {
+        File directory = new File("src/data/saved/monsters");
+        String[] monsterFiles = directory.list();
+        Random fileNumber = new Random();
+
+        for(int i = 0; i < count; i++)
+        {
+            Scanner monsterFile = new Scanner(new File("src/data/saved/monsters/" + monsterFiles[fileNumber.nextInt(0,3)]));
+
+            creatures.add(Monster.loadFromCsv(monsterFile.nextLine()));
+        }
+    }
     public static void main(String[] args) throws IOException
     {
         // Necessary game variables
-        ArrayList<Player> Players = new ArrayList<>();
-        ArrayList<Monster> Monsters = new ArrayList<>();
+        ArrayList<Creature> Creatures = new ArrayList<>();
         ArrayList<Weapon> Weapons = new ArrayList<>();
         Scanner gameInput = new Scanner(System.in);
         Map GAME_MAP = new Map();
@@ -526,19 +423,33 @@ public class Game
             switch(mainMenuChoice)
             {
                 case 1:
-                    gameLoop(Players, GAME_MAP);
+
+                    System.out.println("1. Play with Random Monsters");
+                    System.out.println("2. Play Players Only (PVP)");
+                    System.out.println("3. Back");
+
+                    mainMenuChoice = gameInput.nextInt();
+
+                    if(mainMenuChoice == 1)
+                    {
+                        gameLoopForPVE(Creatures, GAME_MAP, gameInput);
+                    }
+                    else if (mainMenuChoice == 2)
+                    {
+                        gameLoopForPVP(Creatures, gameInput, GAME_MAP);
+                    }
                     break;
 
                 case 2:
-                    Players.add(characterCreationMenu(Weapons));
+                    Creatures.add(characterCreationMenu(Weapons));
                     break;
 
                 case 3:
-                    loadCharacter(Players, gameInput);
+                    loadCharacter(Creatures, gameInput);
                     break;
 
                 case 4:
-                    saveCharacter(Players, gameInput);
+                    saveCharacter(Creatures, gameInput);
                     break;
 
                 case 5:

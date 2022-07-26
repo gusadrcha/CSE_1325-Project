@@ -1,13 +1,16 @@
 package files;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 /**
  * The following class will be used to control game utilities
  * such as rolling dice, etc.
  */
-public class GameUtility {
+public class GameUtility
+{
     /**
      * Generates a random number based on the dice type.
      *
@@ -96,11 +99,34 @@ public class GameUtility {
                     throw new ParseException("NAME CONTAINS A SPECIAL CHARACTER", i);
 
             }
-        } catch (ParseException e) {
+        } catch (ParseException e)
+        {
             System.out.println(e.getMessage());
             return false;
         }
 
         return true;
+    }
+
+    public static void rollInitiative(ArrayList<Creature> creatures)
+    {
+        for(Creature creature : creatures)
+        {
+            creature.setRoll(GameUtility.rollDice("1d20"));
+        }
+
+        Collections.sort(creatures);
+    }
+
+    public static void removeDeadCharacters(ArrayList<Creature> creatures, Map GAME_MAP)
+    {
+        for(int i = 0; i < creatures.size(); i++)
+        {
+            if(creatures.get(i).getHP() == 0)
+            {
+                GAME_MAP.removeCharacter(creatures.get(i).getPosition().getRowValue(), creatures.get(i).getPosition().getColumnValue());
+                creatures.remove(i);
+            }
+        }
     }
 }
