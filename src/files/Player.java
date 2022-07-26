@@ -1,129 +1,58 @@
-import java.time.LocalDateTime;
+package files;
 
-public class Player
+public class Player extends Creature
 {
     // Instance Fields
-    private String name;
-    private String creationDate;
-    private int HP = 50;
-    private int AC = 15;
-    private int STR;
-    private int DEX;
-    private int CON;
     private boolean isDisarmed = false;
     private Weapon weapon;
-    private Movement position;
+    private int disarmTimer = -1;
 
     // Constructors
     public Player()
     {
-        name = "Anonymous";
-        creationDate = LocalDateTime.now().toString();
-        STR = 1;
-        DEX = 1;
-        CON = 1;
+        super();
         weapon = new Weapon();
-        position = new Movement();
     }
 
+    // Constructor used to create a new player during the character menu
     public Player(String n, int str, int dex, int con, Weapon w)
     {
-        name = n;
-        creationDate = LocalDateTime.now().toString();
-        AC += Player.calculateModifier(dex);
-        HP += Player.calculateModifier(AC);
-        STR = str;
-        DEX = dex;
-        CON = con;
+        super(n, str, dex, con);
         weapon = w;
-        position = new Movement();
+    }
+
+    // Constructor used for when loading in a character from save file
+    public Player(String n, String cd, int hp, int str, int dex, int con, Weapon w)
+    {
+        super(n, cd, hp, str, dex, con);
+        weapon = w;
     }
 
     // Setters
-    public void setName(String n)
-    {
-        name = n;
-    }
-
-    public void setHP(int hp)
-    {
-        HP = hp;
-    }
-
-    public void setAC(int ac)
-    {
-        AC = ac;
-    }
-
-    public void setSTR(int str)
-    {
-        STR = str;
-    }
-
-    public void setDEX(int dex)
-    {
-        DEX = dex;
-    }
-
-    public void setCON(int con)
-    {
-        CON = con;
-    }
-
-    public void setDisarmed(boolean d)
-    {
-        isDisarmed = d;
-    }
-
     public void setWeapon(Weapon w)
     {
         weapon = w;
     }
 
-    public void setPosition(Movement p)
+    public void setDisarmed(boolean disarmed)
     {
-        position = p;
+        isDisarmed = disarmed;
+    }
+
+    public void setDisarmTimer(int dt)
+    {
+        disarmTimer = dt;
     }
 
     // Getters
-    public String getName()
+    public int getDisarmTimer()
     {
-        return this.name;
-    }
-
-    public String getCreationDate()
-    {
-        return this.creationDate;
-    }
-
-    public int getHP()
-    {
-        return this.HP;
-    }
-
-    public int getAC()
-    {
-        return this.AC;
-    }
-
-    public int getSTR()
-    {
-        return this.STR;
-    }
-
-    public int getDEX()
-    {
-        return this.DEX;
-    }
-
-    public int getCON()
-    {
-        return this.CON;
+        return this.disarmTimer;
     }
 
     public boolean getIsDisarmed()
     {
-        return isDisarmed;
+        return this.isDisarmed;
     }
 
     public Weapon getWeapon()
@@ -131,26 +60,85 @@ public class Player
         return this.weapon;
     }
 
-    public Movement getPosition()
+    // Method(s)
+    public static Player loadFromCsv(String input)
     {
-        return this.position;
+        try
+        {
+            // temp variables
+            String[] csvLine = input.trim().split(",");
+            String name = null, creationDate = null, weaponName = null, weaponDT = null;
+            int hp = 0, str = 0, dex  = 0, con = 0, wb = 0;
+
+            if(!GameUtility.validateName(csvLine[0]))
+                return null;
+
+            if(csvLine.length != 9)
+                throw new CsvReadException(input);
+
+            name = csvLine[0];
+            creationDate = csvLine[1];
+            hp = Integer.parseInt(csvLine[2]);
+            str = Integer.parseInt(csvLine[3]);
+            dex = Integer.parseInt(csvLine[4]);
+            con = Integer.parseInt(csvLine[5]);
+            weaponName = csvLine[6];
+            weaponDT = csvLine[7];
+            wb = Integer.parseInt(csvLine[8]);
+
+            return new Player(name, creationDate, hp, str, dex, con, new Weapon(weaponName, weaponDT, wb));
+        }
+        catch(CsvReadException e)
+        {
+            System.out.println(e.toString());
+            return null;
+        }
+        catch(NumberFormatException e)
+        {
+            System.out.println(e.toString());
+            return null;
+        }
     }
 
-    // Method(s)
-    public static int calculateModifier(int stat)
+    @Override
+    public void attack(Creature opponent)
     {
-        return stat - 5;
+        int rollHit = this.rollHit();
+
+        if(rollHit < 0)
+            rollHit = 0;
+
+        System.out.print("GAME: "+ this.getName() + " attacks " + opponent.getName() + " with " + this.getWeapon().getName() + " (" + rollHit + " to hit)");
+
+        if(rollHit >= opponent.getAC())
+        {
+            int attackingDamage = this.getWeapon().rollDamage();
+
+            if(attackingDamage < 0)
+            {
+                attackingDamage = 0;
+            }
+
+            opponent.takeDamage(attackingDamage);
+
+            System.out.print("...HITS!\n");
+            System.out.print(opponent.getName() + " took " + attackingDamage + " amount of damage.\n\n");
+        }
+        else
+        {
+            System.out.print("...MISSES!\n");
+        }
     }
 
     public int rollHit()
     {
-        return GameUtility.rollDice("1d20") + Player.calculateModifier(this.DEX) + this.weapon.getHitBonus();
+        return GameUtility.rollDice("1d20") + Creature.calculateModifier(this.getDEX()) + this.weapon.getHitBonus();
     }
 
     // Override(s)
     @Override
     public String toString()
     {
-        return String.format("Name: %s\nCreation Date: %s\nHP: %d\nSTR: %d\nDEX: %d\nCON: %d\n", name, creationDate,HP, STR, DEX, CON);
+        return String.format("Name: %s\nCreation Date: %s\nHP: %d\nSTR: %d\nDEX: %d\nCON: %d\n", this.getName(), this.getCreationDate(),this.getHP(), this.getSTR(), this.getDEX(), this.getCON());
     }
 }

@@ -1,3 +1,5 @@
+package files;
+
 import java.util.Random;
 
 public class Movement
@@ -38,11 +40,6 @@ public class Movement
     }
 
     // Methods
-    public void printPosition()
-    {
-        System.out.println("Player is at\nRow: " + this.rowValue + "\nColumn: " + this.columnValue);
-    }
-
     public boolean moveRight(Map temp, Player player)
     {
 
