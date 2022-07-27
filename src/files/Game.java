@@ -392,10 +392,11 @@ public class Game
 
         for(int i = 0; i < count; i++)
         {
-            Scanner monsterFile = new Scanner(new File("src/data/saved/monsters/" + monsterFiles[fileNumber.nextInt(0,3)]));
+            Scanner monsterFile = new Scanner(new File("src/data/saved/monsters/" + monsterFiles[fileNumber.nextInt(monsterFiles.length -1)]));
 
             creatures.add(Monster.loadFromCsv(monsterFile.nextLine()));
         }
+
     }
     public static void main(String[] args) throws IOException
     {
@@ -460,5 +461,7 @@ public class Game
                     System.out.println("Wrong Input");
             }
         }
+
+        gameInput.close();
     }
 }

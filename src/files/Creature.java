@@ -79,6 +79,17 @@ public abstract class Creature implements Comparable
         this.position = new Movement();
     }
 
+    public Creature(String n, int hp, int ac, int str, int dex, int con)
+    {
+        this.name = n;
+        this.HP = hp;
+        this.AC = ac;
+        this.STR = str;
+        this.DEX = dex;
+        this.CON = con;
+        this.position = new Movement();
+    }
+
     // Methods
     public abstract void attack(Creature opponent);
 
