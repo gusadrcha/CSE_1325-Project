@@ -3,6 +3,7 @@ package files;
 public class Player extends Creature
 {
     // Instance Fields
+    private String avatarPath;
     private boolean isDisarmed = false;
     private Weapon weapon;
     private int disarmTimer = -1;
@@ -28,7 +29,19 @@ public class Player extends Creature
         weapon = w;
     }
 
+    // Constructor used for when creating player through GUI
+    public Player(String n, String avatarPath, int str, int dex, int con, Weapon w)
+    {
+        super(n, str, dex, con);
+        this.avatarPath = avatarPath;
+        this.weapon = w;
+    }
+
     // Setters
+    public void setAvatarPath(String avatarPath)
+    {
+        this.avatarPath = avatarPath;
+    }
     public void setWeapon(Weapon w)
     {
         weapon = w;
@@ -45,6 +58,11 @@ public class Player extends Creature
     }
 
     // Getters
+    public String getAvatarPath()
+    {
+        return this.avatarPath;
+    }
+
     public int getDisarmTimer()
     {
         return this.disarmTimer;
@@ -139,6 +157,6 @@ public class Player extends Creature
     @Override
     public String toString()
     {
-        return String.format("Name: %s\nCreation Date: %s\nHP: %d\nSTR: %d\nDEX: %d\nCON: %d\n", this.getName(), this.getCreationDate(),this.getHP(), this.getSTR(), this.getDEX(), this.getCON());
+        return String.format("Name: %s\nAvatar Path: %s\nCreation Date: %s\nHP: %d\nSTR: %d\nDEX: %d\nCON: %d\n", this.getName(), this.avatarPath, this.getCreationDate(),this.getHP(), this.getSTR(), this.getDEX(), this.getCON());
     }
 }
