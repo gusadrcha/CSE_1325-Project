@@ -17,6 +17,14 @@ public class Movement
         columnValue = randomNum.nextInt(1,25);
     }
 
+    public Movement(int x, int y)
+    {
+        Random randomNum = new Random();
+
+        rowValue = randomNum.nextInt(1,x);
+        columnValue = randomNum.nextInt(1, y);
+    }
+
     // Getters
     public int getRowValue()
     {

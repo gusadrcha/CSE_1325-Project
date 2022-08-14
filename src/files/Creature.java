@@ -14,6 +14,11 @@ public abstract class Creature implements Comparable
     private int CON;
     private Movement position;
     private int roll;
+    private int x;
+    private int y;
+
+    private int totalMovement = 5;
+    private int currentMovement = 5;
 
     // Constructors
     public Creature()
@@ -156,6 +161,14 @@ public abstract class Creature implements Comparable
         this.roll = r;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     // Getters
     public String getName()
     {
@@ -200,6 +213,28 @@ public abstract class Creature implements Comparable
     public int getRoll()
     {
         return this.roll;
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getCurrentMovement() {
+        return this.currentMovement;
+    }
+
+    public void setCurrentMovement(int movement) {
+        this.currentMovement = movement;
+    }
+
+    public void move(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
     }
 
     @Override

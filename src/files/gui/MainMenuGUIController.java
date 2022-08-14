@@ -1,6 +1,7 @@
 package files.gui;
 
 import files.Creature;
+import files.Monster;
 import files.Player;
 import files.Weapon;
 
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MainMenuGUIController implements MenuListener
@@ -23,6 +25,7 @@ public class MainMenuGUIController implements MenuListener
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
     Player[] currentPlayers = new Player[4];
     private JFrame mainMenuFrame;
+    private GUIController gamePanel;
     private JMenuBar statusBar;
     private JMenuBar mainMenuBar;
     private JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -35,6 +38,8 @@ public class MainMenuGUIController implements MenuListener
     private JPopupMenu promptSaveSlot;
     private JPopupMenu promptLoadSlot;
     private JPopupMenu selectedSlot;
+    private PreGamePanel preGamePanel;
+    private ArrayList<Monster> monstersForBattle;
 
     public MainMenuGUIController()
     {
@@ -68,6 +73,7 @@ public class MainMenuGUIController implements MenuListener
         mainMenuBar = new JMenuBar();
 
         JMenu startGameMenu = new JMenu("Start Game");
+        startGameMenu.setEnabled(false);
 
         JMenu createCharacterMenu = new JMenu("Create Character");
         JMenuItem slot1 = new JMenuItem("Slot 1");
@@ -75,10 +81,10 @@ public class MainMenuGUIController implements MenuListener
         JMenuItem slot3 = new JMenuItem("Slot 3");
         JMenuItem slot4 = new JMenuItem("Slot 4");
 
-        slot1.addActionListener(new MenuItemListener());
-        slot2.addActionListener(new MenuItemListener());
-        slot3.addActionListener(new MenuItemListener());
-        slot4.addActionListener(new MenuItemListener());
+        slot1.addActionListener(new CreateCharacterMenuItemListener());
+        slot2.addActionListener(new CreateCharacterMenuItemListener());
+        slot3.addActionListener(new CreateCharacterMenuItemListener());
+        slot4.addActionListener(new CreateCharacterMenuItemListener());
 
         createCharacterMenu.add(slot1);
         createCharacterMenu.add(slot2);
@@ -86,7 +92,39 @@ public class MainMenuGUIController implements MenuListener
         createCharacterMenu.add(slot4);
 
         JMenu loadCharacterMenu = new JMenu("Load Character");
+        JMenuItem loadSlot1 = new JMenuItem("Slot 1");
+        JMenuItem loadSlot2 = new JMenuItem("Slot 2");
+        JMenuItem loadSlot3 = new JMenuItem("Slot 3");
+        JMenuItem loadSlot4 = new JMenuItem("Slot 4");
+
+        loadSlot1.addActionListener(new LoadCharacterMenuItemListener());
+        loadSlot2.addActionListener(new LoadCharacterMenuItemListener());
+        loadSlot3.addActionListener(new LoadCharacterMenuItemListener());
+        loadSlot4.addActionListener(new LoadCharacterMenuItemListener());
+
+        loadCharacterMenu.add(loadSlot1);
+        loadCharacterMenu.add(loadSlot2);
+        loadCharacterMenu.add(loadSlot3);
+        loadCharacterMenu.add(loadSlot4);
+
         JMenu saveCharacterMenu = new JMenu("Save Character");
+        JMenuItem saveSlot1 = new JMenuItem("Slot 1");
+        JMenuItem saveSlot2 = new JMenuItem("Slot 2");
+        JMenuItem saveSlot3 = new JMenuItem("Slot 3");
+        JMenuItem saveSlot4 = new JMenuItem("Slot 4");
+
+        saveSlot1.addActionListener(new SaveCharacterMenuItemListener());
+        saveSlot2.addActionListener(new SaveCharacterMenuItemListener());
+        saveSlot3.addActionListener(new SaveCharacterMenuItemListener());
+        saveSlot4.addActionListener(new SaveCharacterMenuItemListener());
+
+        saveCharacterMenu.add(saveSlot1);
+        saveCharacterMenu.add(saveSlot2);
+        saveCharacterMenu.add(saveSlot3);
+        saveCharacterMenu.add(saveSlot4);
+
+        saveCharacterMenu.setEnabled(false);
+
         JMenu exitMenu = new JMenu("Exit");
 
         startGameMenu.addMenuListener(this);
@@ -117,12 +155,13 @@ public class MainMenuGUIController implements MenuListener
 
     private void createCenterPanel()
     {
-        //centerPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
         ActionListener centerPanelListener = new CenterPanelListener();
 
         JButton startGameButton = new JButton("Start Game");
+        startGameButton.setEnabled(false);
+
         JButton createCharacterButton = new JButton("Create Character");
         JButton loadCharacterButton = new JButton("Load Character");
         JButton saveCharacterButton = new JButton("Save Character");
@@ -172,8 +211,6 @@ public class MainMenuGUIController implements MenuListener
             centerPanel.add(playerPanels[i], constraints);
             constraints.gridx++;
         }
-
-        JLabel partyLabel = new JLabel("Current Party");
     }
 
     private void showMainPanel()
@@ -258,6 +295,37 @@ public class MainMenuGUIController implements MenuListener
         }
 
         hasFile[choice] = true;
+
+        if(containsAtLeastOne())
+        {
+            JMenu startGameMenu = mainMenuBar.getMenu(0);
+            startGameMenu.setEnabled(true);
+
+            JMenu saveCharacterMenu = mainMenuBar.getMenu(3);
+            saveCharacterMenu.setEnabled(true);
+
+            JButton startGameButton = (JButton) centerPanel.getComponent(4);
+            startGameButton.setEnabled(true);
+        }
+    }
+
+    private void showPreGame()
+    {
+        preGamePanel = new PreGamePanel(new PreGameSubmitButton());
+        mainMenuFrame.remove(centerPanel);
+        mainMenuFrame.add(preGamePanel, BorderLayout.CENTER);
+        mainMenuFrame.revalidate();
+        mainMenuFrame.repaint();
+    }
+    private void showGame()
+    {
+        monstersForBattle = preGamePanel.getMonstersSelected();
+
+        gamePanel.setMonsters(monstersForBattle);
+        gamePanel.deployMonsters();
+        mainMenuFrame.revalidate();
+        mainMenuFrame.repaint();
+        mainMenuFrame.setVisible(false);
     }
 
     @Override
@@ -269,6 +337,7 @@ public class MainMenuGUIController implements MenuListener
         switch(action)
         {
             case "Start Game":
+                showPreGame();
                 break;
 
             case "Exit":
@@ -298,6 +367,7 @@ public class MainMenuGUIController implements MenuListener
             switch(action)
             {
                 case "Start Game":
+                    showPreGame();
                     break;
                 case "Create Character":
 
@@ -354,6 +424,7 @@ public class MainMenuGUIController implements MenuListener
             {
                 case "Empty":
                     editPanel = new EditPanel(new EditPlayerListener(), Integer.parseInt(temp.getName()));
+                    choice = Integer.parseInt(temp.getName());
                     showEditPanel();
                     break;
 
@@ -400,6 +471,19 @@ public class MainMenuGUIController implements MenuListener
                     editPanel.clearFields();
                     JLabel tempLabel = (JLabel) statusBar.getComponent(0);
                     tempLabel.setText("Status: Character created");
+
+                    if(containsAtLeastOne())
+                    {
+                        JMenu startGameMenu = mainMenuBar.getMenu(0);
+                        startGameMenu.setEnabled(true);
+
+                        JMenu saveCharacterMenu = mainMenuBar.getMenu(3);
+                        saveCharacterMenu.setEnabled(true);
+
+                        JButton startGameButton = (JButton) centerPanel.getComponent(4);
+                        startGameButton.setEnabled(true);
+                    }
+
                     showMainPanel();
                     break;
 
@@ -412,7 +496,7 @@ public class MainMenuGUIController implements MenuListener
 
     }
 
-    private class MenuItemListener implements ActionListener
+    private class CreateCharacterMenuItemListener implements ActionListener
     {
         @Override
         public void actionPerformed(ActionEvent event)
@@ -443,6 +527,99 @@ public class MainMenuGUIController implements MenuListener
                     choice = 3;
                     editPanel = new EditPanel(new EditPlayerListener(), choice);
                     showEditPanel();
+                    break;
+            }
+        }
+    }
+
+    private class LoadCharacterMenuItemListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent event)
+        {
+            String action = event.getActionCommand();
+
+            Player copy = currentPlayers[choice];
+            boolean loadSuccessful = false;
+
+            switch(action)
+            {
+                case "Slot 1":
+                    choice = 0;
+                    showLoadMenu();
+
+                    if(currentPlayers[choice] != null && currentPlayers[choice] != copy)
+                        loadSuccessful = true;
+
+                    break;
+
+                case "Slot 2":
+                    choice = 1;
+                    showLoadMenu();
+
+                    if(currentPlayers[choice] != null && currentPlayers[choice] != copy)
+                        loadSuccessful = true;
+
+                    break;
+
+                case "Slot 3":
+                    choice = 2;
+                    showLoadMenu();
+
+                    if(currentPlayers[choice] != null && currentPlayers[choice] != copy)
+                        loadSuccessful = true;
+
+                    break;
+
+                case "Slot 4":
+                    choice = 3;
+                    showLoadMenu();
+
+                    if(currentPlayers[choice] != null && currentPlayers[choice] != copy)
+                        loadSuccessful = true;
+
+                    break;
+            }
+
+            JLabel temp = (JLabel) statusBar.getComponent(0);
+            if(loadSuccessful)
+            {
+                temp.setText("Status: Character Successfully Loaded");
+            }
+            else
+            {
+                temp.setText("Status: Character Unsuccessfully Loaded");
+            }
+        }
+    }
+
+    private class SaveCharacterMenuItemListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent event)
+        {
+            String action = event.getActionCommand();
+
+            switch(action)
+            {
+                case "Slot 1":
+                    choice = 0;
+                    showSaveMenu();
+                    break;
+
+                case "Slot 2":
+                    choice = 1;
+                    showSaveMenu();
+                    break;
+
+                case "Slot 3":
+                    choice = 2;
+                    showSaveMenu();
+                    break;
+
+                case "Slot 4":
+                    choice = 3;
+                    showSaveMenu();
                     break;
             }
         }
@@ -614,7 +791,21 @@ public class MainMenuGUIController implements MenuListener
                 case "Remove":
                     selectedSlot.setVisible(false);
                     playerPanels[choice].removePlayer();
+                    currentPlayers[choice] = null;
                     temp.setText("Status: Character removed");
+
+                    if(!containsAtLeastOne())
+                    {
+                        JMenu startGameMenu = mainMenuBar.getMenu(0);
+                        startGameMenu.setEnabled(false);
+
+                        JMenu saveCharacterMenu = mainMenuBar.getMenu(3);
+                        saveCharacterMenu.setEnabled(false);
+
+                        JButton startGameButton = (JButton) centerPanel.getComponent(4);
+                        startGameButton.setEnabled(false);
+                    }
+
                     break;
 
                 case "Replace":
@@ -628,6 +819,16 @@ public class MainMenuGUIController implements MenuListener
                     break;
 
             }
+        }
+    }
+
+    private class PreGameSubmitButton implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent event)
+        {
+            monstersForBattle = preGamePanel.getMonstersSelected();
+            startGame();
         }
     }
 
@@ -739,5 +940,28 @@ public class MainMenuGUIController implements MenuListener
         promptLoadSlot.setLocation(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y);
 
         promptLoadSlot.setVisible(true);
+    }
+
+    public void startGame()
+    {
+        if(!containsAtLeastOne())
+        {
+            JLabel temp = (JLabel) statusBar.getComponent(0);
+            temp.setText("Status: There are no characters loaded.");
+            return;
+        }
+
+        gamePanel = new GUIController(currentPlayers);
+        showGame();
+    }
+
+    public boolean containsAtLeastOne()
+    {
+        for(int i = 0; i < currentPlayers.length; i++)
+        {
+            if(currentPlayers[i] != null)
+                return  true;
+        }
+        return false;
     }
 }

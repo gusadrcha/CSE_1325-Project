@@ -7,12 +7,30 @@ public class Monster extends Creature
         Humanoid, Fiend, Dragon
     }
 
+    String monsterAvatarPath;
+
     private MonsterType type;
 
     public Monster(String n, int hp , int ac, int str, int dex, int con, MonsterType type)
     {
         super(n, hp, ac, str, dex, con);
         this.type = type;
+    }
+
+    public Monster(String n, String monsterAvatarPath, int hp, int ac, int str, int dex, int con)
+    {
+        super(n, hp, ac, str, dex, con);
+        this.monsterAvatarPath = monsterAvatarPath;
+    }
+
+    public String getMonsterAvatarPath()
+    {
+        return this.monsterAvatarPath;
+    }
+
+    public void setMonsterAvatarPath(String monsterAvatarPath)
+    {
+        this.monsterAvatarPath = monsterAvatarPath;
     }
 
     @Override
@@ -119,6 +137,6 @@ public class Monster extends Creature
     @Override
     public String toString()
     {
-        return this.getName() + " - " + this.type;
+        return this.getName();
     }
 }
